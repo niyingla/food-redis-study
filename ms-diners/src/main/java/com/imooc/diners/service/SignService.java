@@ -59,9 +59,15 @@ public class SignService {
         int dayOfMonth = DateUtil.lengthOfMonth(DateUtil.month(date) + 1,
                 DateUtil.isLeapYear(DateUtil.year(date)));
         // bitfield user:sign:5:202011 u30 0
-        BitFieldSubCommands bitFieldSubCommands = BitFieldSubCommands.create()
+        BitFieldSubCommands bitFieldSubCommands =
+                //命令创建方法 BitFieldSubCommands
+                BitFieldSubCommands.create()
+                //指定获取字段类型 BitFieldType（数据位数）
+                //字段类型为 BitFieldSubCommands.BitFieldType.unsigned（i） 无符号 i位
                 .get(BitFieldSubCommands.BitFieldType.unsigned(dayOfMonth))
+                //第0个位（bitMap 一个表 0就是下标）
                 .valueAt(0);
+
         List<Long> list = redisTemplate.opsForValue().bitField(signKey, bitFieldSubCommands);
         if (list == null || list.isEmpty()) {
             return signInfo;

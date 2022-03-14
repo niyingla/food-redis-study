@@ -47,8 +47,7 @@ public class RestaurantService {
                 // 写入缓存一个空数据，设置一个失效时间，60s
             }
         } else {
-            restaurant = BeanUtil.fillBeanWithMap(restaurantMap,
-                    new Restaurant(), false);
+            restaurant = BeanUtil.fillBeanWithMap(restaurantMap, new Restaurant(), false);
         }
         return restaurant;
     }

@@ -56,8 +56,7 @@ public class NearMeService {
         // 获取 key diner:location
         String key = RedisKeyConstant.diner_location.getKey();
         // 将用户地理位置信息存入 Redis
-        RedisGeoCommands.GeoLocation geoLocation = new RedisGeoCommands
-                .GeoLocation(signInDinerInfo.getId(), new Point(lon, lat));
+        RedisGeoCommands.GeoLocation geoLocation = new RedisGeoCommands.GeoLocation(signInDinerInfo.getId(), new Point(lon, lat));
         redisTemplate.opsForGeo().add(key, geoLocation);
     }
 
@@ -88,25 +87,21 @@ public class NearMeService {
         if (lon == null || lat == null) {
             // 如果经纬度没传，那么从 Redis 中获取
             List<Point> points = redisTemplate.opsForGeo().position(key, dinerId);
-            AssertUtil.isTrue(points == null || points.isEmpty(),
-                    "获取经纬度失败");
+            AssertUtil.isTrue(points == null || points.isEmpty(), "获取经纬度失败");
             point = points.get(0);
         } else {
             point = new Point(lon, lat);
         }
         // 初始化距离对象，单位 m
-        Distance distance = new Distance(radius,
-                RedisGeoCommands.DistanceUnit.METERS);
+        Distance distance = new Distance(radius, RedisGeoCommands.DistanceUnit.METERS);
         // 初始化 Geo 命令参数对象
-        RedisGeoCommands.GeoRadiusCommandArgs args =
-                RedisGeoCommands.GeoRadiusCommandArgs.newGeoRadiusArgs();
+        RedisGeoCommands.GeoRadiusCommandArgs args = RedisGeoCommands.GeoRadiusCommandArgs.newGeoRadiusArgs();
         // 附近的人限制 20，包含距离，按由近到远排序
         args.limit(20).includeDistance().sortAscending();
         // 以用户经纬度为圆心，范围 1000m
         Circle circle = new Circle(point, distance);
         // 获取附近的人 GeoLocation 信息
-        GeoResults<RedisGeoCommands.GeoLocation> geoResult =
-                redisTemplate.opsForGeo().radius(key, circle, args);
+        GeoResults<RedisGeoCommands.GeoLocation> geoResult = redisTemplate.opsForGeo().radius(key, circle, args);
         // 构建有序 Map
         Map<Integer, NearMeDinerVO> nearMeDinerVOMap = Maps.newLinkedHashMap();
         // 完善用户头像昵称信息
